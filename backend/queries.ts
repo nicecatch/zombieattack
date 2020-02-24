@@ -1,6 +1,6 @@
 import Location from "../database/models/Location";
 
-const getLocations = async () => {
+const getLocations = () => {
   return Location.find({});
 };
 

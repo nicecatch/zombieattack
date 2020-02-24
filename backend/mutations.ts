@@ -4,8 +4,10 @@ const moveZombies = async (
   _: any,
   { from, to, amount }: { from: string; to: string; amount: number }
 ) => {
-  const fromLocation = await Location.findById(from).exec();
-  const toLocation = await Location.findById(to).exec();
+  const [fromLocation, toLocation] = await Promise.all([
+    Location.findById(from).exec(),
+    Location.findById(to).exec()
+  ]);
 
   if (!fromLocation || !toLocation) {
     throw new Error("Locations not found");
@@ -16,9 +18,11 @@ const moveZombies = async (
   }
 
   fromLocation.zombiesCount = fromLocation.zombiesCount - amount;
-  await fromLocation.save();
   toLocation.zombiesCount = toLocation.zombiesCount + amount;
-  await toLocation.save();
+  await Promise.all([
+    fromLocation.save(),
+    toLocation.save()
+  ]);
 
   return Location.find({});
 };
